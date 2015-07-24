@@ -1,7 +1,7 @@
 <?php
 /**
  * Meta Plugin: Sets metadata for the current page
- * 
+ *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <wikidesign@gmail.com>
  */
@@ -14,21 +14,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
  * need to inherit from this class
  */
 class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
-
-    /**
-     * return some info
-     */
-    function getInfo() {
-        return array(
-                'author' => 'Esther Brunner',
-                'email'  => 'wikidesign@gmail.com',
-                'date'   => '2006-04-15',
-                'name'   => 'Meta Plugin',
-                'desc'   => 'Sets metadata for the current page',
-                'url'    => 'http://wiki.splitbrain.org/plugin:meta',
-                );
-    }
-
     function getType() { return 'substition'; }
     function getSort() { return 99; }
     function connectTo($mode) { $this->Lexer->addSpecialPattern('~~META:.*?~~',$mode,'plugin_meta');}
@@ -36,7 +21,7 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler){
         $match = substr($match,7,-2); //strip ~~META: from start and ~~ from end
 
         $data = array();
@@ -55,10 +40,11 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         if ($mode == 'xthml') {
             return true; // don't output anything
         } elseif ($mode == 'metadata') {
+            /** @var Doku_Renderer_metadata $renderer */
 
             // do some validation / conversion for date metadata
             if (isset($data['date'])) {
@@ -80,15 +66,24 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
                 // be careful with sub-arrays of $meta['relation']
                 if ($key == 'relation') {
                     foreach ($value as $subkey => $subvalue) {
-                        $renderer->meta[$key][$subkey] =
-                            array_merge($renderer->meta[$key][$subkey], $subvalue);
+                        if ($subkey == 'media') {
+                            $renderer->meta[$key][$subkey][cleanID($subvalue)] = @file_exists(mediaFN($subvalue));
+                        } elseif ($subkey == 'firstimage') {
+                            /* The metadata renderer overrides the first image value with its internal value at the end.
+                            Therefore the only thing we can do is setting this internal value by calling _firstimage.
+                            This fails if there has already been a first image saved. */
+                            $renderer->_firstimage($subvalue);
+                        } else { // for everything else assume that we have a page id
+                            $renderer->meta[$key][$subkey][cleanID($subvalue)] = page_exists($subvalue);
+                        }
                     }
 
                     // be careful with some senisitive arrays of $meta
                 } elseif (in_array($key, $protected)) {
-                    if (is_array($value)) {
-                        $renderer->meta[$key] =
-                            array_merge($renderer->meta[$key], $value);
+                    if (array_key_exists($key, $renderer->meta)) {
+                        $renderer->meta[$key] = array_merge($renderer->meta[$key], $value);
+                    } else {
+                        $renderer->meta[$key] = $value;
                     }
 
                     // no special treatment for the rest

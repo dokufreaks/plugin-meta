@@ -1,0 +1,7 @@
+base   meta
+author Michael Hamann
+email  michael@content-space.de
+date   2015-07-24
+name   Meta plugin
+desc   Set Metadata for the current page. (previous authors: Esther Brunner, Gina Häußge, Michael Klier)
+url    http://www.dokuwiki.org/plugin:meta
