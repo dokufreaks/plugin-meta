@@ -102,6 +102,12 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
 
         // single date
         if (!$end) {
+            
+            // iso8601 format yyyy-mm-ddThh:mm+hh:mm //
+            if (preg_match('/\d{4}\-\d{2}\-\d{2}\T\d{2}\:\d{2}\:\d{2}[+-]\d{2}\:\d{2}/', $start)) {
+            return strtotime($start);
+            }
+            
             list($date, $time) = explode(' ', trim($start), 2);
             if (!preg_match('/\d{4}\-\d{2}\-\d{2}/', $date)) return false;
             $time = $this->_autocompleteTime($time);
