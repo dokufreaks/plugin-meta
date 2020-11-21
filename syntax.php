@@ -80,8 +80,8 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin {
 
                     // be careful with some senisitive arrays of $meta
                 } elseif (in_array($key, $protected)) {
-                    if (array_key_exists($key, $renderer->meta)) {
-                        $renderer->meta[$key] = array_merge($renderer->meta[$key], $value);
+                    if (is_array($renderer->meta) && array_key_exists($key, $renderer->meta)) {
+                        $renderer->meta[$key] = array_merge($renderer->meta[$key], array($value));
                     } else {
                         $renderer->meta[$key] = $value;
                     }
