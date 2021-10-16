@@ -4,4 +4,4 @@ email  michael@content-space.de
 date   2021-10-16
 name   Meta plugin
 desc   Set Metadata for the current page. (previous authors: Esther Brunner, Gina Häußge, Michael Klier)
-url    http://www.dokuwiki.org/plugin:meta
+url    https://www.dokuwiki.org/plugin:meta
