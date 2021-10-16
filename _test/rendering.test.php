@@ -7,7 +7,7 @@ if (!defined('DOKU_INC')) die();
  */
 class plugin_meta_rendering_test extends DokuWikiTest {
 
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'meta';
         parent::setUp();
     }
