@@ -56,7 +56,7 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin
      */
     public function render($mode, Doku_Renderer $renderer, $data)
     {
-        if ($mode == 'xthml') {
+        if ($mode == 'xhtml') {
             // don't output anything
             return true;
         } elseif ($mode == 'metadata') {
