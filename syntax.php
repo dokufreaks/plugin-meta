@@ -119,6 +119,14 @@ class syntax_plugin_meta extends DokuWiki_Syntax_Plugin
     {
         list($start, $end) = explode('->', $date, 2);
 
+        // iso8601 time format patch
+        if (preg_match('/\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}[+-]\d{2}\:\d{2}/', trim($start))) {
+            $start = date('Y-m-d H:i:s', strtotime(trim($start)));
+        }
+        if (preg_match('/\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}[+-]\d{2}\:\d{2}/', trim($end))) {
+            $end = date('Y-m-d H:i:s', strtotime(trim($end)));
+        }
+        
         if (!$end) {
             // single date
             list($date, $time) = explode(' ', trim($start), 2);
